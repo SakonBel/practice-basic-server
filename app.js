@@ -1,24 +1,11 @@
-const fs = require("fs");
 const express = require("express");
-
-// Create app
 const app = express();
 
-// Parse JSON body to the app
+// Middleware to parse JSON bodies
 app.use(express.json());
 
-// Retrieve JSON file
-const file = fs.readFileSync(`${__dirname}/users.json`, "utf-8");
-const data = JSON.parse(file);
+const userRoutes = require("./routes/userRoutes");
 
-app.get("/api/v1/users", (req, res) => {
-  res.status(200).json({
-    status: "success",
-    results: data.length,
-    users: {
-      data,
-    },
-  });
-});
+app.use("/api/v1/users", userRoutes);
 
 module.exports = app;
