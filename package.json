@@ -1,0 +1,25 @@
+{
+  "name": "practice-basic-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SakonBel/practice-basic-server.git"
+  },
+  "author": "Sakon Plangklang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SakonBel/practice-basic-server/issues"
+  },
+  "homepage": "https://github.com/SakonBel/practice-basic-server#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
