@@ -3,6 +3,7 @@ const path = require("path");
 
 const USERS_FILE = path.join(__dirname, "../users.json");
 
+// Utility: Load users from file
 function loadUsers() {
   try {
     const file = fs.readFileSync(USERS_FILE, "utf-8");
@@ -13,6 +14,7 @@ function loadUsers() {
   }
 }
 
+// Utility: Save users to file
 function saveUsers(users) {
   try {
     fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), "utf-8");
@@ -23,6 +25,17 @@ function saveUsers(users) {
   }
 }
 
+// Utility: Validate user object
+function isValidUser(user) {
+  return user && typeof user.id !== "undefined";
+}
+
+// Utility: Send error response
+function sendError(res, status, message) {
+  return res.status(status).json({ status: "fail", message });
+}
+
+// GET /api/v1/users
 exports.getAllUsers = (req, res) => {
   const users = loadUsers();
   res.status(200).json({
@@ -32,18 +45,15 @@ exports.getAllUsers = (req, res) => {
   });
 };
 
+// POST /api/v1/users
 exports.createUser = (req, res) => {
   const users = loadUsers();
   const newUser = req.body;
-  if (!newUser || !newUser.id) {
-    return res
-      .status(400)
-      .json({ status: "fail", message: "User id required" });
+  if (!isValidUser(newUser)) {
+    return sendError(res, 400, "User id required");
   }
   if (users.find((u) => u.id === newUser.id)) {
-    return res
-      .status(409)
-      .json({ status: "fail", message: "User id already exists" });
+    return sendError(res, 409, "User id already exists");
   }
   users.push(newUser);
   if (saveUsers(users)) {
@@ -53,13 +63,14 @@ exports.createUser = (req, res) => {
   }
 };
 
+// PATCH /api/v1/users/:id
 exports.updateUser = (req, res) => {
   const users = loadUsers();
   const userId = req.params.id;
   const update = req.body;
-  const userIndex = users.findIndex((u) => u.id == userId);
+  const userIndex = users.findIndex((u) => u.id === userId);
   if (userIndex === -1) {
-    return res.status(404).json({ status: "fail", message: "User not found" });
+    return sendError(res, 404, "User not found");
   }
   users[userIndex] = { ...users[userIndex], ...update };
   if (saveUsers(users)) {
@@ -69,12 +80,35 @@ exports.updateUser = (req, res) => {
   }
 };
 
+// PUT /api/v1/users/:id
+exports.replaceUser = (req, res) => {
+  const users = loadUsers();
+  const userId = req.params.id;
+  const newUser = req.body;
+  const userIndex = users.findIndex((u) => u.id === userId);
+  if (userIndex === -1) {
+    return sendError(res, 404, "User not found");
+  }
+  if (!isValidUser(newUser)) {
+    return sendError(res, 400, "User id required");
+  }
+  users[userIndex] = newUser;
+  if (saveUsers(users)) {
+    res.status(200).json({ status: "success", data: newUser });
+  } else {
+    res
+      .status(500)
+      .json({ status: "error", message: "Failed to replace user" });
+  }
+};
+
+// DELETE /api/v1/users/:id
 exports.deleteUser = (req, res) => {
   const users = loadUsers();
   const userId = req.params.id;
-  const userIndex = users.findIndex((u) => u.id == userId);
+  const userIndex = users.findIndex((u) => u.id === userId);
   if (userIndex === -1) {
-    return res.status(404).json({ status: "fail", message: "User not found" });
+    return sendError(res, 404, "User not found");
   }
   const deletedUser = users.splice(userIndex, 1)[0];
   if (saveUsers(users)) {
