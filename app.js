@@ -49,10 +49,22 @@ app.patch('/api/v1/users/:id', (req, res) => {
   const filterUsers = users.filter((u) => u.id !== userId);
   const newUsers = [...filterUsers, req.body];
   saveUsers(newUsers);
-  res.status(209).json({
+  res.status(200).json({
     status: 'success',
     message: 'User has been updated',
     data: req.body,
+  });
+});
+
+app.delete('/api/v1/users/:id', (req, res) => {
+  const userId = parseInt(req.params.id);
+  const userToDeletedArr = users.filter((u) => u.id === userId);
+  const userToDeleted = userToDeletedArr[0];
+  const newUsers = users.filter((u) => u.id !== userId);
+  saveUsers(newUsers);
+  res.status(200).json({
+    status: 'success',
+    message: `user ${userToDeleted.name} with the ID ${userToDeleted.id} has been deleted!`,
   });
 });
 module.exports = app;
