@@ -1,12 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const express = require('express');
+import fs from 'fs';
+import path from 'path';
+import express from 'express';
 
 const app = express();
 
 app.use(express.json());
 
-const USERS_FILE = path.join(__dirname, 'users.json');
+const USERS_FILE = path.join(import.meta.dirname, 'users.json');
 
 const loadUsers = () => {
   try {
@@ -67,4 +67,5 @@ app.delete('/api/v1/users/:id', (req, res) => {
     message: `user ${userToDeleted.name} with the ID ${userToDeleted.id} has been deleted!`,
   });
 });
-module.exports = app;
+
+export default app;
