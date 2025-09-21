@@ -4,6 +4,9 @@ import { loadUsers, saveUsers } from '../utils/usersUtils.js';
 const users = loadUsers();
 
 export const getUsers = (req, res) => {
+  // if (process.env.username === 'Bel') {
+  //   console.log('Correct!');
+  // }
   res.status(200).json({
     status: 'success',
     users,
