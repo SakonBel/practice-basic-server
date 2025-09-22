@@ -1,7 +1,7 @@
-import { loadUsers, saveUsers } from '../utils/usersUtils.js';
+import { loadUsers } from '../utils/usersUtils.js';
 
 // Initial users loading
-const users = loadUsers();
+const users = await loadUsers().catch((err) => console.log(err));
 
 export const getUsers = (req, res) => {
   // if (process.env.username === 'Bel') {
